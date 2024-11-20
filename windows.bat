@@ -18,7 +18,7 @@ echo        Welcome to the Luckycoin Node Installation
 color %CYAN%
 echo ========================================================
 
-:: Check if curl is available
+:: Check if curl and jq are available
 where curl >nul 2>nul
 if errorlevel 1 (
     color %RED%
@@ -27,37 +27,25 @@ if errorlevel 1 (
     exit /b
 )
 
-:: Fetch the latest release URL dynamically
-color %BLUE%
-echo Fetching the latest release details...
-set "LATEST_RELEASE="
-for /f "tokens=*" %%i in ('curl -s https://api.github.com/repos/LuckyCoinProj/luckycoinV3/releases/latest') do (
-    set "LATEST_RELEASE=!LATEST_RELEASE!%%i"
-)
-if "!LATEST_RELEASE!"=="" (
+where jq >nul 2>nul
+if errorlevel 1 (
     color %RED%
-    echo Failed to fetch the latest release information. Please check your internet connection or GitHub API limits.
+    echo jq is not installed. Please install jq for JSON parsing.
     pause
     exit /b
 )
 
-:: Extract tag name
-for /f "tokens=2 delims=:," %%i in ('echo !LATEST_RELEASE! ^| findstr /i /c:"tag_name"') do set "TAG_NAME=%%i"
-set "TAG_NAME=%TAG_NAME:"=%"
-color %GREEN%
-echo Latest release found: %TAG_NAME%
-
-:: Define asset name and URL
-set "ASSET_NAME=Node-%TAG_NAME%-windows.zip"
-for /f "tokens=*" %%i in ('echo !LATEST_RELEASE! ^| findstr /i /c:"browser_download_url"') do (
-    echo %%i | findstr /i /c:"%ASSET_NAME%" >nul
-    if not errorlevel 1 (
-        for /f "tokens=2 delims=:," %%j in ('echo %%i') do set "ASSET_URL=%%j"
-        set "ASSET_URL=%ASSET_URL:~1,-1%"
-        goto :continue
-    )
+:: Fetch the latest release URL dynamically using curl and jq
+color %BLUE%
+echo Fetching the latest release details...
+set "LATEST_RELEASE_URL=https://api.github.com/repos/LuckyCoinProj/luckycoinV3/releases/latest"
+for /f "tokens=*" %%i in ('curl -s %LATEST_RELEASE_URL%') do (
+    set "LATEST_RELEASE=!LATEST_RELEASE!%%i"
 )
-:continue
+
+:: Extract tag name and asset download URL
+for /f "tokens=*" %%i in ('echo !LATEST_RELEASE! ^| jq -r ".tag_name"') do set "TAG_NAME=%%i"
+for /f "tokens=*" %%i in ('echo !LATEST_RELEASE! ^| jq -r ".assets[] | select(.name == \"Node-%TAG_NAME%-windows.zip\") | .browser_download_url"') do set "ASSET_URL=%%i"
 
 if not defined ASSET_URL (
     color %RED%
@@ -67,7 +55,9 @@ if not defined ASSET_URL (
 )
 
 color %GREEN%
-echo Selected asset: %ASSET_NAME%
+echo Latest release found: %TAG_NAME%
+echo Selected asset: Node-%TAG_NAME%-windows.zip
+echo Asset URL: %ASSET_URL%
 
 :: Check if Luckycoin Node is already running and prompt for update
 tasklist | findstr /i luckycoind.exe >nul
