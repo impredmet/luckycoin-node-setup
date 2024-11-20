@@ -15,7 +15,7 @@ This guide explains how to install the **Luckycoin** node on Linux and Windows.
    Open a terminal and execute the following command to download and run the installation script:
 
    ```bash
-   curl -s https://github.com/impredmet/luckycoin-node-setup/raw/main/install.sh | bash
+   curl -s https://raw.githubusercontent.com/impredmet/luckycoin-node-setup/refs/heads/main/install.sh | bash
    ```
 
 2. **The script will handle everything**:
