@@ -90,3 +90,6 @@ echo -e "${CYAN}========================================================${RESET}
 echo -e "${GREEN}Luckycoin Node setup complete!${RESET}"
 echo -e "${CYAN}========================================================${RESET}"
 echo -e "Use '${YELLOW}luckycoin-cli help${RESET}' for commands and management."
+echo -e "${YELLOW}Example:${RESET} To check the current block height of your node, run:"
+echo -e "${GREEN}luckycoin-cli getblockcount${RESET}"
+echo -e "This will display the current block height, helping you verify your node's synchronization status."
