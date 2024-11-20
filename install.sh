@@ -59,22 +59,16 @@ if pgrep -x "luckycoind" > /dev/null; then
     fi
 fi
 
-# Disable input on script execution via curl | bash
-if [ -t 0 ]; then
-    # This means the script is being run interactively, so ask for input
-    echo -e "${YELLOW}Please select your Linux version:${RESET}"
-    echo -e "1) General Linux (most distros)"
-    echo -e "2) Ubuntu 20.04"
-    read -rp "$(echo -e "${BLUE}Enter your choice (1 or 2): ${RESET}")" os_choice
+# Prompt user for OS type after checking update
+echo -e "${YELLOW}Please select your Linux version:${RESET}"
+echo -e "1) General Linux (most distros)"
+echo -e "2) Ubuntu 20.04"
+read -rp "$(echo -e "${BLUE}Enter your choice (1 or 2): ${RESET}")" os_choice
 
-    # Validate input
-    if [[ "$os_choice" != "1" && "$os_choice" != "2" ]]; then
-        echo -e "${RED}Invalid choice. Please run the script again and select 1 or 2.${RESET}"
-        exit 1
-    fi
-else
-    # If it's not interactive, set a default choice or skip the input
-    os_choice="1"  # Default to "General Linux" if no input
+# Validate input
+if [[ "$os_choice" != "1" && "$os_choice" != "2" ]]; then
+    echo -e "${RED}Invalid choice. Please run the script again and select 1 or 2.${RESET}"
+    exit 1
 fi
 
 # Define the download URL dynamically based on user selection
