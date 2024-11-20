@@ -83,7 +83,7 @@ wget https://github.com/LuckyCoinProj/luckycoinV3/releases/download/v3.0.2/lucky
 echo -e "${CYAN}========================================================${RESET}"
 echo -e "${BLUE}Step 5: Starting Luckycoin Node...${RESET}"
 echo -e "${CYAN}========================================================${RESET}"
-luckycoind
+luckycoind -daemon
 
 # Completion message
 echo -e "${CYAN}========================================================${RESET}"
