@@ -59,6 +59,9 @@ if pgrep -x "luckycoind" > /dev/null; then
     fi
 fi
 
+echo -e "${CYAN}Press [Enter] to continue with the installation...${RESET}"
+read -r  # This will pause the script until the user presses Enter
+
 # Prompt user for OS type after checking update
 while true; do
     echo -e "${YELLOW}Please select your Linux version:${RESET}"
