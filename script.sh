@@ -17,7 +17,49 @@ echo -e "${CYAN}========================================================${RESET}
 echo -e "${GREEN}      Welcome to the Luckycoin Node Installation        ${RESET}"
 echo -e "${CYAN}========================================================${RESET}"
 
-# Prompt user for OS type
+# Fetch the latest release URL dynamically
+echo -e "${BLUE}Fetching the latest release details...${RESET}"
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/LuckyCoinProj/luckycoinV3/releases/latest)
+if [ -z "$LATEST_RELEASE" ]; then
+    echo -e "${RED}Failed to fetch the latest release information. Please check your internet connection or GitHub API limits.${RESET}"
+    exit 1
+fi
+
+# Extract tag name and assets
+TAG_NAME=$(echo "$LATEST_RELEASE" | grep -oP '"tag_name": "\K(.*?)(?=")')
+echo -e "${GREEN}Latest release found: ${TAG_NAME}${RESET}"
+
+# Check if Luckycoin Node is already running and prompt user for update
+if pgrep -x "luckycoind" > /dev/null; then
+    echo -e "${YELLOW}Luckycoin Node is already running.${RESET}"
+    CURRENT_VERSION=$(luckycoin-cli --version | grep -oP 'v[0-9]+\.[0-9]+\.[0-9]+')
+    if [ "$CURRENT_VERSION" == "$TAG_NAME" ]; then
+        echo -e "${GREEN}Your Luckycoin Node is already up-to-date (version ${CURRENT_VERSION}).${RESET}"
+        echo -e "Use '${YELLOW}luckycoin-cli help${RESET}' for commands and management."
+        echo -e "${YELLOW}Example:${RESET} To check the current block height of your node, run:"
+        echo -e "${GREEN}luckycoin-cli getblockcount${RESET}"
+        echo -e "This will display the current block height, helping you verify your node's synchronization status."
+        exit 0
+    else
+        echo -e "${YELLOW}A new version (${TAG_NAME}) is available. Current version: ${CURRENT_VERSION}.${RESET}"
+        echo -e "Do you want to update your Luckycoin Node? (y/n)"
+        read -rp "$(echo -e "${BLUE}Enter your choice: ${RESET}")" update_choice
+        if [[ "$update_choice" == "y" || "$update_choice" == "Y" ]]; then
+            echo -e "${YELLOW}Stopping Luckycoin Node...${RESET}"
+            luckycoin-cli stop
+            sleep 5  # Allow time for the node to shut down
+        else
+            echo -e "${GREEN}No update performed. Node is still running.${RESET}"
+            echo -e "Use '${YELLOW}luckycoin-cli help${RESET}' for commands and management."
+            echo -e "${YELLOW}Example:${RESET} To check the current block height of your node, run:"
+            echo -e "${GREEN}luckycoin-cli getblockcount${RESET}"
+            echo -e "This will display the current block height, helping you verify your node's synchronization status."
+            exit 0
+        fi
+    fi
+fi
+
+# Prompt user for OS type after checking update
 echo -e "${YELLOW}Please select your Linux version:${RESET}"
 echo -e "1) General Linux (most distros)"
 echo -e "2) Ubuntu 20.04"
@@ -29,26 +71,20 @@ if [[ "$os_choice" != "1" && "$os_choice" != "2" ]]; then
     exit 1
 fi
 
-# Define the download URL based on user selection
+# Define the download URL dynamically based on user selection
 if [ "$os_choice" -eq 1 ]; then
-    NODE_URL="https://github.com/LuckyCoinProj/luckycoinV3/releases/download/v3.0.2/Node-v3.0.2-linux.zip"
-    NODE_NAME="Node-v3.0.2-linux.zip"
-    echo -e "${GREEN}You selected General Linux.${RESET}"
+    ASSET_NAME="Node-${TAG_NAME}-linux.zip"
 elif [ "$os_choice" -eq 2 ]; then
-    NODE_URL="https://github.com/LuckyCoinProj/luckycoinV3/releases/download/v3.0.2/Node-v3.0.2-ubuntu20.04.zip"
-    NODE_NAME="Node-v3.0.2-ubuntu20.04.zip"
-    echo -e "${GREEN}You selected Ubuntu 20.04.${RESET}"
+    ASSET_NAME="Node-${TAG_NAME}-ubuntu20.04.zip"
 fi
 
-# Check if Luckycoin Node is already running
-if pgrep -x "luckycoind" > /dev/null; then
-    echo -e "${YELLOW}Luckycoin Node is already running.${RESET}"
-    echo -e "Use '${YELLOW}luckycoin-cli help${RESET}' for commands and management."
-    echo -e "${YELLOW}Example:${RESET} To check the current block height of your node, run:"
-    echo -e "${GREEN}luckycoin-cli getblockcount${RESET}"
-    echo -e "This will display the current block height, helping you verify your node's synchronization status."
-    exit 0
+ASSET_URL=$(echo "$LATEST_RELEASE" | grep -oP '"browser_download_url": "\K(.*?'"$ASSET_NAME"')" | tr -d '"')
+if [ -z "$ASSET_URL" ]; then
+    echo -e "${RED}Failed to find the asset for your selection. Please check the release page manually.${RESET}"
+    exit 1
 fi
+
+echo -e "${GREEN}Selected asset: ${ASSET_NAME}${RESET}"
 
 # Update and install dependencies
 echo -e "${CYAN}========================================================${RESET}"
@@ -61,9 +97,9 @@ sudo apt-get install -y build-essential libtool autotools-dev automake pkg-confi
 echo -e "${CYAN}========================================================${RESET}"
 echo -e "${BLUE}Step 2: Downloading Luckycoin Node...${RESET}"
 echo -e "${CYAN}========================================================${RESET}"
-wget $NODE_URL -O $NODE_NAME
-unzip $NODE_NAME
-rm $NODE_NAME
+wget $ASSET_URL -O $ASSET_NAME
+unzip $ASSET_NAME
+rm $ASSET_NAME
 
 # Set execute permissions
 chmod +x luckycoind luckycoin-cli luckycoin-tx
@@ -87,7 +123,7 @@ chmod 700 ~/.luckycoin
 echo -e "${CYAN}========================================================${RESET}"
 echo -e "${BLUE}Step 4: Downloading configuration file...${RESET}"
 echo -e "${CYAN}========================================================${RESET}"
-wget https://github.com/LuckyCoinProj/luckycoinV3/releases/download/v3.0.2/luckycoin.conf -O ~/.luckycoin/luckycoin.conf
+wget https://github.com/LuckyCoinProj/luckycoinV3/releases/download/${TAG_NAME}/luckycoin.conf -O ~/.luckycoin/luckycoin.conf
 
 # Run the Luckycoin Node
 echo -e "${CYAN}========================================================${RESET}"
