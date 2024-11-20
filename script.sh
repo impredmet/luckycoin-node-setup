@@ -40,6 +40,16 @@ elif [ "$os_choice" -eq 2 ]; then
     echo -e "${GREEN}You selected Ubuntu 20.04.${RESET}"
 fi
 
+# Check if Luckycoin Node is already running
+if pgrep -x "luckycoind" > /dev/null; then
+    echo -e "${YELLOW}Luckycoin Node is already running.${RESET}"
+    echo -e "Use '${YELLOW}luckycoin-cli help${RESET}' for commands and management."
+    echo -e "${YELLOW}Example:${RESET} To check the current block height of your node, run:"
+    echo -e "${GREEN}luckycoin-cli getblockcount${RESET}"
+    echo -e "This will display the current block height, helping you verify your node's synchronization status."
+    exit 0
+fi
+
 # Update and install dependencies
 echo -e "${CYAN}========================================================${RESET}"
 echo -e "${BLUE}Step 1: Installing dependencies...${RESET}"
