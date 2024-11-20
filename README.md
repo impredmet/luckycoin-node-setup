@@ -65,3 +65,13 @@ This guide explains how to install and update the **Luckycoin** node on Linux an
 ---
 
 This script also works for updating an already installed Luckycoin node, ensuring that you’re always running the latest version.
+
+## Video Example
+
+Here is a video example showing how to install and update the **Luckycoin** node on Ubuntu 20.04:
+
+![](example.gif)
+
+---
+
+This video demonstrates the installation process and how to run the `luckycoin-cli getblockcount` command to verify the node's status on Ubuntu 20.04.
