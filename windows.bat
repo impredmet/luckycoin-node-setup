@@ -47,25 +47,8 @@ set "TAG_NAME=%TAG_NAME:~1,-1%"
 color %GREEN%
 echo Latest release found: %TAG_NAME%
 
-:: Select Windows architecture
-color %YELLOW%
-echo Please select your Windows architecture:
-echo 1) 64-bit
-echo 2) 32-bit
-set /p "os_choice=Enter your choice (1 or 2): "
-
-if "%os_choice%"=="1" (
-    set "ASSET_NAME=Node-%TAG_NAME%-win64.zip"
-) else if "%os_choice%"=="2" (
-    set "ASSET_NAME=Node-%TAG_NAME%-win32.zip"
-) else (
-    color %RED%
-    echo Invalid choice. Please run the script again and select 1 or 2.
-    pause
-    exit /b
-)
-
-:: Extract download URL
+:: Define asset name and URL
+set "ASSET_NAME=Node-%TAG_NAME%-windows.zip"
 for /f "tokens=*" %%i in ('echo !LATEST_RELEASE! ^| findstr /i /c:"browser_download_url"') do (
     echo %%i | findstr /i /c:"%ASSET_NAME%" >nul
     if not errorlevel 1 (
@@ -86,7 +69,7 @@ if not defined ASSET_URL (
 color %GREEN%
 echo Selected asset: %ASSET_NAME%
 
-:: Check if Luckycoin Node is already running
+:: Check if Luckycoin Node is already running and prompt for update
 tasklist | findstr /i luckycoind.exe >nul
 if not errorlevel 1 (
     color %YELLOW%
@@ -95,7 +78,6 @@ if not errorlevel 1 (
     set /p CURRENT_VERSION=<version.tmp
     del version.tmp
     set "CURRENT_VERSION=%CURRENT_VERSION:v=%"
-    set "CURRENT_VERSION=%CURRENT_VERSION:.0=%"
     if "%CURRENT_VERSION%"=="%TAG_NAME%" (
         color %GREEN%
         echo Your Luckycoin Node is already up-to-date (version %TAG_NAME%).
