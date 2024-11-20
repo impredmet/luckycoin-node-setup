@@ -60,16 +60,20 @@ if pgrep -x "luckycoind" > /dev/null; then
 fi
 
 # Prompt user for OS type after checking update
-echo -e "${YELLOW}Please select your Linux version:${RESET}"
-echo -e "1) General Linux (most distros)"
-echo -e "2) Ubuntu 20.04"
-read -rp "$(echo -e "${BLUE}Enter your choice (1 or 2): ${RESET}")" os_choice
+while true; do
+    echo -e "${YELLOW}Please select your Linux version:${RESET}"
+    echo -e "1) General Linux (most distros)"
+    echo -e "2) Ubuntu 20.04"
+    read -rp "$(echo -e "${BLUE}Enter your choice (1 or 2): ${RESET}")" os_choice
 
-# Validate input
-if [[ "$os_choice" != "1" && "$os_choice" != "2" ]]; then
-    echo -e "${RED}Invalid choice. Please run the script again and select 1 or 2.${RESET}"
-    exit 1
-fi
+    # Validate input
+    if [[ "$os_choice" == "1" || "$os_choice" == "2" ]]; then
+        break
+    else
+        echo -e "${RED}Invalid choice. Please run the script again and select 1 or 2.${RESET}"
+        echo -e "Press [Ctrl+C] to exit or [Enter] to retry."
+    fi
+done
 
 # Define the download URL dynamically based on user selection
 if [ "$os_choice" -eq 1 ]; then
