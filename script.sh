@@ -78,7 +78,7 @@ elif [ "$os_choice" -eq 2 ]; then
     ASSET_NAME="Node-${TAG_NAME}-ubuntu20.04.zip"
 fi
 
-ASSET_URL=$(echo "$LATEST_RELEASE" | grep -oP '"browser_download_url": "\K.*('"$ASSET_NAME"')"')
+ASSET_URL=$(echo "$LATEST_RELEASE" | grep -oP '"browser_download_url": "\K[^"]+('"$ASSET_NAME"')')
 if [ -z "$ASSET_URL" ]; then
     echo -e "${RED}Failed to find the asset for your selection. Please check the release page manually.${RESET}"
     exit 1
