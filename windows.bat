@@ -43,7 +43,7 @@ if "!LATEST_RELEASE!"=="" (
 
 :: Extract tag name
 for /f "tokens=2 delims=:," %%i in ('echo !LATEST_RELEASE! ^| findstr /i /c:"tag_name"') do set "TAG_NAME=%%i"
-set "TAG_NAME=%TAG_NAME:~1,-1%"
+set "TAG_NAME=%TAG_NAME:"=%"
 color %GREEN%
 echo Latest release found: %TAG_NAME%
 
