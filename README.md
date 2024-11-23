@@ -11,34 +11,20 @@ This guide explains how to install and update the **Luckycoin** node on Linux an
 
 ## Installation and Update on Linux
 
-1. **Download the installation or update script**  
-   Open a terminal and execute the following command to download the installation or update script:
+1. **Download and execute the installation or update script**  
+   Open a terminal and execute the following command:
 
    ```bash
-   wget https://raw.githubusercontent.com/impredmet/luckycoin-node-setup/refs/heads/main/install.sh
+   curl https://raw.githubusercontent.com/impredmet/luckycoin-node-setup/refs/heads/main/install.sh > install.sh && chmod +x install.sh && ./install.sh
    ```
 
-2. **Make the script executable**  
-   After downloading, make the script executable by running the following command:
-
-   ```bash
-   chmod +x install.sh
-   ```
-
-3. **Run the script**  
-   Execute the script to install or update the Luckycoin node:
-
-   ```bash
-   ./install.sh
-   ```
-
-4. **The script will handle everything**:
+2. **The script will handle everything**:
 
    - It will download the necessary files for the installation or update.
    - Install required dependencies (if needed).
    - Configure your node and start it in the background.
 
-5. **Verify the installation or update**:  
+3. **Verify the installation or update**:  
    Once the installation or update is complete, you can check if the node is running by using the following command:
 
    ```bash
