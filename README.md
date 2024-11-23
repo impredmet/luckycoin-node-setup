@@ -4,7 +4,7 @@ This guide explains how to install and update the **Luckycoin** node on Linux an
 
 ## Prerequisites
 
-- **Linux**: Ensure that `wget` is installed on your machine.
+- **Linux**: Ensure that `curl` is installed on your machine.
 - **Windows**: Simply download the `.exe` file from the releases page.
 
 ---
@@ -15,7 +15,7 @@ This guide explains how to install and update the **Luckycoin** node on Linux an
    Open a terminal and execute the following command:
 
    ```bash
-   curl https://raw.githubusercontent.com/impredmet/luckycoin-node-setup/refs/heads/main/install.sh > install.sh && chmod +x install.sh && ./install.sh
+   curl https://raw.githubusercontent.com/impredmet/luckycoin-node-setup/refs/heads/main/install.sh > install.sh && chmod +x install.sh && ./install.sh && rm install.sh
    ```
 
 2. **The script will handle everything**:
